@@ -4,11 +4,11 @@ import java.util.Scanner;
 
 public class MenuInicial {
 	static Scanner in = new Scanner(System.in);
-	static int[] usu = {1 ,2};
-	static String[] senh = {"321","123"};
+	public static int idu=0;
+	public static String nome="";
 	public static BancoDeDados bd = new BancoDeDados();
-	public static int idu;
-	public static String nome;
+	public static MenuNC mnc = new MenuNC();
+	
 	
 	public static void login() {
 		String s;
@@ -18,6 +18,11 @@ public class MenuInicial {
 		System.out.println("Digite a senha do Usuário");
 		s = in.next();
 		bd.selecionarUsuario(u, s);
+		if((idu!=0) & (!nome.equals(""))) {
+			mnc.idu=idu;
+			mnc.usuario=nome;
+			mnc.visualizar();
+		}
 	}
 	
 	public static void esqueceuSenha() {
@@ -49,8 +54,10 @@ public class MenuInicial {
 			default:
 				System.out.println("Opção inválida");
 			}
+			in.reset();
 		}while(escolha!=0);
 		bd.EncerraConexao();
+		in.close();
 	}
 
 }

@@ -1,13 +1,15 @@
 package gerenciar;
 
 import java.sql.ResultSet;
-import java.util.Scanner;
+
 
 public class MenuNC {
+	
+	public static BancoDeDados bd = new BancoDeDados();
+	
 	String usuario;
 	int idu;
 	public static ResultSet resultado;
-	public static Scanner in = new Scanner("System.in");
 	
 	public void cadastrar() {
 		
@@ -24,11 +26,13 @@ public class MenuNC {
 	public void visualizar() {
 		int escolha;
 		do {
-			System.out.print("1- MenuNC\t2-Escolher NC\t3-Audição");
-			
-			escolha = in.nextInt();
+			System.out.println("1- MenuNC\t2-Escolher NC\t3-Audição");
+			bd.selecionarNC();
+			escolha = MenuInicial.in.nextInt();
 			switch(escolha) {
 			case 1:
+				System.out.println("11- Cadastrar NC\t12- Alterar NC\t13- Excluir\t99- Sair");
+				escolha = MenuInicial.in.nextInt();
 				break;
 			case 2:
 				break;
@@ -39,11 +43,10 @@ public class MenuNC {
 				break;
 			}
 		}while(escolha!=99);
-		
+		MenuInicial.idu=0;
+		MenuInicial.nome="";
 	}
 	
-	public MenuNC(String u, int id){
-		usuario=u;
-		idu=id;
+	public MenuNC(){
 	}
 }
