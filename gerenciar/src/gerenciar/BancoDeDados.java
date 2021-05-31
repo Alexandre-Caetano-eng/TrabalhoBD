@@ -75,6 +75,35 @@ public class BancoDeDados {
 		}
 	}
 	
+	public void selecionarNC() {
+		Statement comando = null;
+		ResultSet resultado = null;
+		try {
+			if(conexao!=null) {
+				comando = conexao.createStatement();
+				String sql ="SELECT * FROM NC";
+				resultado = comando.executeQuery(sql);
+				while(resultado.next()) {
+					System.out.print("Código NC: "+resultado.getInt("idNC")+" Nome: "+resultado.getString("nome")+" Prioridades: "+resultado.getInt("prioridades")+" ");
+					if(resultado.getDate("dataTermino")==null) {
+						System.out.print(" Em aberto\n");
+					}else {
+						System.out.print(" Encerrado\n");
+					}
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void EncerraConexao() {
 		ClasseConexao.FecharConexao(conexao);
 	}
