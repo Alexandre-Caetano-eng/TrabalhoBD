@@ -4,9 +4,10 @@ import java.util.Scanner;
 
 public class MenuInicial {
 	static Scanner in = new Scanner(System.in);
-	public static int idu=0;
+	public static int codu=0;
 	public static String nome="";
 	public static BancoDeDados bd = new BancoDeDados();
+	public static BancoDeDadosUsuario bdu = new BancoDeDadosUsuario();
 	public static MenuNC mnc = new MenuNC();
 	
 	
@@ -17,9 +18,9 @@ public class MenuInicial {
 		u = in.nextInt();
 		System.out.println("Digite a senha do Usuário");
 		s = in.next();
-		bd.selecionarUsuario(u, s);
-		if((idu!=0) & (!nome.equals(""))) {
-			mnc.idu=idu;
+		bdu.selecionarUsuario(u, s);
+		if((codu!=0) & (!nome.equals(""))) {
+			mnc.codu=codu;
 			mnc.usuario=nome;
 			mnc.visualizar();
 		}
@@ -29,7 +30,7 @@ public class MenuInicial {
 		int u;
 		System.out.println("Digite o id do Usuário");
 		u = in.nextInt();
-		bd.selecionarUsuario(u);
+		bdu.selecionarUsuario(u);
 	}
 
 	public static void main(String[] args) {
