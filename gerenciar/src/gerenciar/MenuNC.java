@@ -7,6 +7,8 @@ public class MenuNC {
 	
 	public static BancoDeDadosNC bdNC = new BancoDeDadosNC();
 	public static BancoDeDadosUsuario bdU = new BancoDeDadosUsuario();
+	public static DataCheck dc = new DataCheck();
+	public static NC nc = new NC();
 	
 	String usuario;
 	int codu;
@@ -33,7 +35,14 @@ public class MenuNC {
 			}
 		}while(desc.equals(""));
 		System.out.println("Digite a data da NC no formato ano(4 digitos)-mes(2)-dia(2)");
-		data=MenuInicial.in.next();
+		existe=false;
+		do {
+			data=MenuInicial.in.next();
+			existe = dc.VerificaData(data, 1);
+			if(existe==false) {
+				System.out.println("Erro, digite a data da NC no formato ano(4 digitos)-mes(2)-dia(2)");
+			}
+		}while(existe==false);
 		System.out.println("Digite a prioridade da NC (0 < prioridade < 6)");		
 		do {
 			prio=MenuInicial.in.nextInt();
@@ -55,10 +64,6 @@ public class MenuNC {
 		bdNC.cadastroNC(nome, desc, data, prio, uNC, eNC);
 	}
 	
-	public void alterar() {
-		
-	}
-	
 	public void deletar() {
 		int codnc=-1;
 		System.out.println("Menu de deletar NC");
@@ -70,15 +75,20 @@ public class MenuNC {
 		}while(codnc!=-1);
 	}
 	
+	public void Audicao() {
+		System.out.println("Audição de NC");
+		bdNC.selecionarNC(1);
+	}
+	
 	public void visualizar() {
 		int escolha;
 		do {
-			System.out.println("1- MenuNC\t2-Escolher NC\t3-Audição");
-			bdNC.selecionarNC();
+			System.out.println("1- MenuNC\t2-Escolher NC");
+			bdNC.selecionarNC(0);
 			escolha = MenuInicial.in.nextInt();
 			switch(escolha) {
 			case 1:
-				System.out.println("11- Cadastrar NC\t12- Alterar NC \t13- Excluir\t99- Sair");
+				System.out.println("11- Cadastrar NC\t12- Audição NC \t12- Excluir NC\t99- Sair");
 				escolha = MenuInicial.in.nextInt();
 				switch(escolha) {
 				case 11:
@@ -98,8 +108,21 @@ public class MenuNC {
 				}
 				break;
 			case 2:
-				break;
-			case 3:
+				System.out.println("Digite o numero de id da NC ou -1 para sair");
+				existe=false;
+				do {
+					escolha=MenuInicial.in.nextInt();
+					if(escolha==-1) {
+						existe=true;
+					}else {
+						existe=bdNC.selecionarNC((float)escolha);
+						if(existe==true) {
+							System.out.println("Abrindo NC");
+							nc.visualizar(escolha);
+						}
+					}
+				}while(existe==false);
+				escolha=0;
 				break;
 			default:
 				System.out.println("Numero digitado incorreto.");

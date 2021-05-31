@@ -7,20 +7,26 @@ import java.sql.Statement;
 
 public class BancoDeDadosNC {
 
-	public void selecionarNC() {
-		Statement comando = null;
+	public void selecionarNC(int a) {
+		//seleciona todas a nc, 0 = não finalizadas, qualquer outra = finalizadas
+		PreparedStatement comando = null;
 		ResultSet resultado = null;
 		try {
 			if(BancoDeDados.conexao!=null) {
-				comando = BancoDeDados.conexao.createStatement();
-				String sql ="SELECT * FROM NC";
+				String sql;
+				if(a==0) {
+					sql ="SELECT * FROM NC WHERE dataTermino IS NULL";
+				}else {
+					sql ="SELECT * FROM NC WHERE dataTermino IS NOT NULL";
+				}
+				comando = BancoDeDados.conexao.prepareStatement(sql);
 				resultado = comando.executeQuery(sql);
 				while(resultado.next()) {
 					System.out.print("Código NC: "+resultado.getInt("idNC")+" Nome: "+resultado.getString("nome")+" Prioridades: "+resultado.getInt("prioridades")+" ");
 					if(resultado.getDate("dataTermino")==null) {
-						System.out.print(" Em aberto\n");
+						System.out.println(" Em aberto data inicio "+resultado.getString("dataCriacao"));
 					}else {
-						System.out.print(" Encerrado\n");
+						System.out.println(" Encerrado na data "+resultado.getString("dataTermino"));
 					}
 				}
 			}
@@ -36,7 +42,65 @@ public class BancoDeDadosNC {
 		}
 	}
 	
+	public void selecionarNC(String id) {
+		//seleciona uma nc espesifica
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		int num = Integer.parseInt(id);
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="SELECT * FROM NC WHERE idNC="+num;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				while(resultado.next()) {
+					System.out.println("Código NC: "+resultado.getInt("idNC")+" Nome: "+resultado.getString("nome")+"\t\t Prioridades: "+resultado.getInt("prioridades")+" ");
+					System.out.println(" Em aberto data inicio "+resultado.getDate("dataCriacao")+" Encerrado "+resultado.getDate("dataTermino"));
+					System.out.println("Descrição: "+resultado.getString("descricao"));
+					System.out.println("Resolução: "+resultado.getString("resolucao"));
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public boolean selecionarNC(float id) {
+		//verifica se uma nc existe
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		int a=(int) id;
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="SELECT * FROM NC WHERE idNC="+a;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				while(resultado.next()) {
+					return true;
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
 	public void cadastroNC(String n, String d, String data, int p, int u, int eq) {
+		//cadastra uma nova nc
 		PreparedStatement comando = null;
 		ResultSet resultado = null;		
 		try {
@@ -74,6 +138,33 @@ public class BancoDeDadosNC {
 			try {
 				comando.close();
 				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void alterarNC(int i,int p) {
+		//altera a prioridade
+		PreparedStatement comando = null;	
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="UPDATE `nc` SET `prioridades`=? WHERE `idnc`=?";
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				comando.setInt(1,p);
+				comando.setInt(2,i);
+				if(comando.executeUpdate()>0) {
+					System.out.println("Prioridade alterada para "+p);
+				}else {
+					System.out.println("Prioridade não foi alterada");
+				}
+			}
+		}catch(SQLException e) {
+			System.out.print("Nc não cadastrada");
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}
