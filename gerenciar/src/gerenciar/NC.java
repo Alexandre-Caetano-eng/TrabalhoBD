@@ -28,7 +28,7 @@ public class NC {
 		do {
 			System.out.println("Escolha a opção: 1-Alterar prioridade NC\n2-Adicionar Resolução\n3-Inserir Usuário Responsável NC\n4-Inserir Equipe responsavel NC\n0-Sair");
 			System.out.println("--------------------------------------------------------------------------------");
-			bdNC.selecionarNC(String.valueOf(id));
+			bdNC.selecionarNCespecifica(id);
 			escolha = MenuInicial.in.nextInt();
 			switch(escolha) {
 			case 1:

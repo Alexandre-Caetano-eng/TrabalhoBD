@@ -8,7 +8,6 @@ public class MenuInicial {
 	public static String nome="";
 	public static BancoDeDados bd = new BancoDeDados();
 	public static BancoDeDadosUsuario bdu = new BancoDeDadosUsuario();
-	public static MenuNC mnc = new MenuNC();
 	
 	
 	public static void login() {
@@ -18,12 +17,7 @@ public class MenuInicial {
 		u = in.nextInt();
 		System.out.println("Digite a senha do Usuário");
 		s = in.next();
-		bdu.selecionarUsuario(u, s);
-		if((codu!=0) & (!nome.equals(""))) {
-			mnc.codu=codu;
-			mnc.usuario=nome;
-			mnc.visualizar();
-		}
+		bdu.loginUsuario(u, s);
 	}
 	
 	public static void esqueceuSenha() {

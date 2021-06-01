@@ -6,7 +6,8 @@ import java.sql.Statement;
 
 public class BancoDeDadosUsuario {
 
-	public void selecionarUsuario(int i, String s) {
+	public void loginUsuario(int i, String s) {
+		//login de usuário
 		Statement comando = null;
 		ResultSet resultado = null;
 		try {
@@ -16,8 +17,7 @@ public class BancoDeDadosUsuario {
 				resultado = comando.executeQuery(sql);
 				if(resultado.next()) {
 					System.out.println("Login efetuado");
-					MenuInicial.codu=resultado.getInt("idU");
-					MenuInicial.nome=resultado.getString("nome");
+					new MenuNC(resultado.getInt("idU"), resultado.getString("nome"));
 				}else {
 					System.out.println("Usuário ou Senha Inválidos");
 				}

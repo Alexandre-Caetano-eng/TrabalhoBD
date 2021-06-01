@@ -10,8 +10,8 @@ public class MenuNC {
 	public static DataCheck dc = new DataCheck();
 	public static NC nc = new NC();
 	
-	String usuario;
-	int codu;
+	protected static String usuario;
+	protected static int codu;
 	public static ResultSet resultado;
 	public static boolean existe;
 	
@@ -80,7 +80,7 @@ public class MenuNC {
 		bdNC.selecionarNC(1);
 	}
 	
-	public void visualizar() {
+	protected void visualizar() {
 		int escolha;
 		do {
 			System.out.println("1- MenuNC\t2-Escolher NC");
@@ -88,7 +88,7 @@ public class MenuNC {
 			escolha = MenuInicial.in.nextInt();
 			switch(escolha) {
 			case 1:
-				System.out.println("11- Cadastrar NC\t12- Audição NC \t12- Excluir NC\t99- Sair");
+				System.out.println("11- Cadastrar NC\t12- Audição NC \t\t12- Excluir NC\t\t99- Sair");
 				escolha = MenuInicial.in.nextInt();
 				switch(escolha) {
 				case 11:
@@ -115,7 +115,7 @@ public class MenuNC {
 					if(escolha==-1) {
 						existe=true;
 					}else {
-						existe=bdNC.selecionarNC((float)escolha);
+						existe=bdNC.verificaNC(escolha);
 						if(existe==true) {
 							System.out.println("Abrindo NC");
 							nc.visualizar(escolha);
@@ -135,6 +135,9 @@ public class MenuNC {
 		MenuInicial.nome="";
 	}
 	
-	public MenuNC(){
+	public MenuNC(int i, String u){
+		codu=i;
+		usuario=u;
+		visualizar();
 	}
 }

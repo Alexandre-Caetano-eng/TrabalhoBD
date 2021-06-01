@@ -42,14 +42,13 @@ public class BancoDeDadosNC {
 		}
 	}
 	
-	public void selecionarNC(String id) {
-		//seleciona uma nc espesifica
+	public void selecionarNCespecifica(int id) {
+		//seleciona uma nc específica
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
-		int num = Integer.parseInt(id);
 		try {
 			if(BancoDeDados.conexao!=null) {
-				String sql ="SELECT * FROM NC WHERE idNC="+num;
+				String sql ="SELECT * FROM NC WHERE idNC="+id;
 				comando = BancoDeDados.conexao.prepareStatement(sql);
 				resultado = comando.executeQuery(sql);
 				while(resultado.next()) {
@@ -71,14 +70,13 @@ public class BancoDeDadosNC {
 		}
 	}
 	
-	public boolean selecionarNC(float id) {
+	public boolean verificaNC(int id) {
 		//verifica se uma nc existe
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
-		int a=(int) id;
 		try {
 			if(BancoDeDados.conexao!=null) {
-				String sql ="SELECT * FROM NC WHERE idNC="+a;
+				String sql ="SELECT * FROM NC WHERE idNC="+id;
 				comando = BancoDeDados.conexao.prepareStatement(sql);
 				resultado = comando.executeQuery(sql);
 				while(resultado.next()) {
