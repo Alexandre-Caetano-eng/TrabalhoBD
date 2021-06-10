@@ -7,6 +7,7 @@ public class MenuNC {
 	
 	public static BancoDeDadosNC bdNC = new BancoDeDadosNC();
 	public static BancoDeDadosUsuario bdU = new BancoDeDadosUsuario();
+	public static BancoDeDadosEquipe bdE = new BancoDeDadosEquipe();
 	public static DataCheck dc = new DataCheck();
 	public static NC nc = new NC();
 	
@@ -53,13 +54,25 @@ public class MenuNC {
 		System.out.println("Digite o id do Usuário da NC (opcional, digite -1 se não tiver)");
 		do {
 			uNC=MenuInicial.in.nextInt();
+			if(uNC==-1) {
+				break;
+			}
 			existe=bdU.verificaUsuarioExiste(uNC);
 			if(existe==false) {
 				System.out.println("Usuário não encontrado, digite um id válido (opcional, digite -1 se não tiver)");
 			}
 		}while(existe==false);
-		System.out.println("Digite a Equipe da NC (opcional, digite -1 se não tiver)");
-		eNC=MenuInicial.in.nextInt();
+		existe=false;
+		do {
+			System.out.println("Digite a Equipe da NC (opcional, digite -1 se não tiver) "+existe);
+			eNC = MenuInicial.in.nextInt();
+			if(bdE.verificaEquipeExiste(eNC)==true ||eNC==-1) {
+				existe=true;
+				System.out.println("Id de equipe válida. "+existe);
+			}else {
+				System.out.println("Id de equipe inválida. "+existe);
+			}
+		}while(existe==false);
 		bdNC.cadastroNC(nome, desc, data, prio, uNC, eNC);
 	}
 	
