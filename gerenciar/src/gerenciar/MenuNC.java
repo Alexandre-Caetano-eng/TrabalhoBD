@@ -55,7 +55,7 @@ public class MenuNC {
 		do {
 			uNC=MenuInicial.in.nextInt();
 			if(uNC==-1) {
-				break;
+				existe=true;
 			}
 			existe=bdU.verificaUsuarioExiste(uNC);
 			if(existe==false) {
@@ -64,13 +64,13 @@ public class MenuNC {
 		}while(existe==false);
 		existe=false;
 		do {
-			System.out.println("Digite a Equipe da NC (opcional, digite -1 se não tiver) "+existe);
+			System.out.println("Digite a Equipe da NC (opcional, digite -1 se não tiver)");
 			eNC = MenuInicial.in.nextInt();
 			if(bdE.verificaEquipeExiste(eNC)==true ||eNC==-1) {
 				existe=true;
-				System.out.println("Id de equipe válida. "+existe);
+				System.out.println("Id de equipe válida.");
 			}else {
-				System.out.println("Id de equipe inválida. "+existe);
+				System.out.println("Id de equipe inválida.");
 			}
 		}while(existe==false);
 		bdNC.cadastroNC(nome, desc, data, prio, uNC, eNC);
