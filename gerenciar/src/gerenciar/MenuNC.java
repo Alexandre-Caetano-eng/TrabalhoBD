@@ -10,8 +10,8 @@ public class MenuNC {
 	public static DataCheck dc = new DataCheck();
 	public static NC nc = new NC();
 	
-	String usuario;
-	int codu;
+	protected static String usuario;
+	protected static int codu;
 	public static ResultSet resultado;
 	public static boolean existe;
 	
@@ -50,13 +50,12 @@ public class MenuNC {
 				System.out.println("Prioridade da NC incorreta, digite 1, 2, 3, 4 ou 5 para prioridade");
 			}
 		}while(prio>5 || prio<1);
-		System.out.println("Digite o Usuario da NC (opcional, digite -1 se não tiver)");
+		System.out.println("Digite o id do Usuário da NC (opcional, digite -1 se não tiver)");
 		do {
 			uNC=MenuInicial.in.nextInt();
-			if(uNC!=-1) {
-				bdU.selecionarUsuario(uNC, existe);
-			}else {
-				existe=true;
+			existe=bdU.verificaUsuarioExiste(uNC);
+			if(existe==false) {
+				System.out.println("Usuário não encontrado, digite um id válido (opcional, digite -1 se não tiver)");
 			}
 		}while(existe==false);
 		System.out.println("Digite a Equipe da NC (opcional, digite -1 se não tiver)");
@@ -80,7 +79,7 @@ public class MenuNC {
 		bdNC.selecionarNC(1);
 	}
 	
-	public void visualizar() {
+	protected void visualizar() {
 		int escolha;
 		do {
 			System.out.println("1- MenuNC\t2-Escolher NC");
@@ -88,7 +87,7 @@ public class MenuNC {
 			escolha = MenuInicial.in.nextInt();
 			switch(escolha) {
 			case 1:
-				System.out.println("11- Cadastrar NC\t12- Audição NC \t12- Excluir NC\t99- Sair");
+				System.out.println("11- Cadastrar NC\t12- Audição NC \t\t12- Excluir NC\t\t99- Sair");
 				escolha = MenuInicial.in.nextInt();
 				switch(escolha) {
 				case 11:
@@ -115,7 +114,7 @@ public class MenuNC {
 					if(escolha==-1) {
 						existe=true;
 					}else {
-						existe=bdNC.selecionarNC((float)escolha);
+						existe=bdNC.verificaNC(escolha);
 						if(existe==true) {
 							System.out.println("Abrindo NC");
 							nc.visualizar(escolha);
@@ -135,6 +134,9 @@ public class MenuNC {
 		MenuInicial.nome="";
 	}
 	
-	public MenuNC(){
+	public MenuNC(int i, String u){
+		codu=i;
+		usuario=u;
+		visualizar();
 	}
 }

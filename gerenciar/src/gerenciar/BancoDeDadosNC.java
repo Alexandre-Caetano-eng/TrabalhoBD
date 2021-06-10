@@ -42,21 +42,48 @@ public class BancoDeDadosNC {
 		}
 	}
 	
-	public void selecionarNC(String id) {
-		//seleciona uma nc espesifica
+	public void selecionarNCespecifica(int id) {
+		//seleciona uma nc específica
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
-		int num = Integer.parseInt(id);
 		try {
 			if(BancoDeDados.conexao!=null) {
-				String sql ="SELECT * FROM NC WHERE idNC="+num;
+				String sql ="SELECT * FROM NC WHERE idNC="+id;
 				comando = BancoDeDados.conexao.prepareStatement(sql);
 				resultado = comando.executeQuery(sql);
 				while(resultado.next()) {
 					System.out.println("Código NC: "+resultado.getInt("idNC")+" Nome: "+resultado.getString("nome")+"\t\t Prioridades: "+resultado.getInt("prioridades")+" ");
 					System.out.println(" Em aberto data inicio "+resultado.getDate("dataCriacao")+" Encerrado "+resultado.getDate("dataTermino"));
 					System.out.println("Descrição: "+resultado.getString("descricao"));
-					System.out.println("Resolução: "+resultado.getString("resolucao"));
+					if(resultado.getString("resolucao")==null) {
+						System.out.println("Resolução: Sem resolução ainda");
+					}else {
+						System.out.println("Resolução: "+resultado.getString("resolucao"));
+					}
+				}
+				sql ="SELECT u.nome FROM NC AS n JOIN Usuario AS u ON n.idU=u.idU WHERE idNC="+id;
+				comando.close();
+				resultado.close();
+				comando = null;
+				resultado = null;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				if(resultado.next()) {
+					System.out.println("Nome do Usuario Responsável: "+resultado.getString("u.nome"));
+				}else {
+					System.out.println("Nome do Usuario Responsável: Sem usuário responsável");
+				}
+				comando.close();
+				resultado.close();
+				comando = null;
+				resultado = null;
+				sql ="SELECT e.nome FROM NC AS n JOIN Equipe AS e ON n.idE=e.idE WHERE idNC="+id;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				if(resultado.next()) {
+					System.out.println("Nome da Equipe Responsável: "+resultado.getString("e.nome"));
+				}else {
+					System.out.println("Nome da Equipe Responsável: Sem equipe responsável");
 				}
 			}
 		}catch(SQLException e) {
@@ -71,18 +98,74 @@ public class BancoDeDadosNC {
 		}
 	}
 	
-	public boolean selecionarNC(float id) {
+	public boolean verificaNC(int id) {
 		//verifica se uma nc existe
 		PreparedStatement comando = null;
 		ResultSet resultado = null;
-		int a=(int) id;
 		try {
 			if(BancoDeDados.conexao!=null) {
-				String sql ="SELECT * FROM NC WHERE idNC="+a;
+				String sql ="SELECT * FROM NC WHERE idNC="+id;
 				comando = BancoDeDados.conexao.prepareStatement(sql);
 				resultado = comando.executeQuery(sql);
 				while(resultado.next()) {
 					return true;
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	
+	public boolean verificaNCEResp(int id) {
+		//verifica se uma nc existe
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="SELECT * FROM `nc` WHERE `idE` IS NULL and `idNC`="+id;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				if(resultado.next()) {
+					return true;
+				}else {
+					return false;
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+			return false;
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return false;
+	}
+	public boolean verificaNCUResp(int id) {
+		//verifica se uma nc existe
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="SELECT `idU` FROM `nc` WHERE `idU` IS NULL and `idNC`="+id;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				if(resultado.next()) {
+					return true;
+				}else {
+					return false;
 				}
 			}
 		}catch(SQLException e) {
@@ -144,7 +227,7 @@ public class BancoDeDadosNC {
 		}
 	}
 	
-	public void alterarNC(int i,int p) {
+	public void alterarPrioridadeNC(int i,int p) {
 		//altera a prioridade
 		PreparedStatement comando = null;	
 		try {
@@ -157,6 +240,60 @@ public class BancoDeDadosNC {
 					System.out.println("Prioridade alterada para "+p);
 				}else {
 					System.out.println("Prioridade não foi alterada");
+				}
+			}
+		}catch(SQLException e) {
+			System.out.print("Nc não cadastrada");
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void alterarEquipeRespNC(int i,int eq) {
+		//altera a prioridade
+		PreparedStatement comando = null;	
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="UPDATE `nc` SET `idE`=? WHERE `idnc`=?";
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				comando.setInt(1,eq);
+				comando.setInt(2,i);
+				if(comando.executeUpdate()>0) {
+					System.out.println("Nova equipe responsável.");
+				}else {
+					System.out.println("Equipe responsável não alterada.");
+				}
+			}
+		}catch(SQLException e) {
+			System.out.print("Nc não cadastrada");
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void alterarUsuarioRespNC(int i,int u) {
+		//altera a prioridade
+		PreparedStatement comando = null;	
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="UPDATE `nc` SET `idU`=? WHERE `idnc`=?";
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				comando.setInt(1,u);
+				comando.setInt(2,i);
+				if(comando.executeUpdate()>0) {
+					System.out.println("Novo usuário responsável.");
+				}else {
+					System.out.println("Usuário responsável não alterado.");
 				}
 			}
 		}catch(SQLException e) {
