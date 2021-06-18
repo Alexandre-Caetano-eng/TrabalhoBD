@@ -98,6 +98,37 @@ public class BancoDeDadosNC {
 		}
 	}
 	
+	public String retornaResolucao(int id) {
+		//seleciona uma nc específica
+		PreparedStatement comando = null;
+		ResultSet resultado = null;
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="SELECT * FROM NC WHERE idNC="+id;
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				resultado = comando.executeQuery(sql);
+				while(resultado.next()) {
+					if(resultado.getString("resolucao")==null) {
+						return "";
+					}else {
+						return resultado.getString("resolucao");
+					}
+					
+				}
+			}
+		}catch(SQLException e) {
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
+				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return "";
+	}
+	
 	public boolean verificaNC(int id) {
 		//verifica se uma nc existe
 		PreparedStatement comando = null;
@@ -221,6 +252,34 @@ public class BancoDeDadosNC {
 			try {
 				comando.close();
 				resultado.close();
+			}catch(SQLException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void adicionarResolucaoNC(int i, String r) {
+		//altera a prioridade
+		String resolucao = retornaResolucao(i);
+		PreparedStatement comando = null;	
+		try {
+			if(BancoDeDados.conexao!=null) {
+				String sql ="UPDATE `nc` SET `resolucao`=? WHERE `idnc`=?";
+				comando = BancoDeDados.conexao.prepareStatement(sql);
+				comando.setString(1,resolucao+" "+r);
+				comando.setInt(2,i);
+				if(comando.executeUpdate()>0) {
+					System.out.println("Resolução adicionada: "+r);
+				}else {
+					System.out.println("Resolução não foi adicionada");
+				}
+			}
+		}catch(SQLException e) {
+			System.out.print("Nc não cadastrada");
+			e.printStackTrace();
+		}finally{
+			try {
+				comando.close();
 			}catch(SQLException e) {
 				e.printStackTrace();
 			}

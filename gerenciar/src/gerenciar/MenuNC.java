@@ -56,8 +56,9 @@ public class MenuNC {
 			uNC=MenuInicial.in.nextInt();
 			if(uNC==-1) {
 				existe=true;
+			}else {
+				existe=bdU.verificaUsuarioExiste(uNC);
 			}
-			existe=bdU.verificaUsuarioExiste(uNC);
 			if(existe==false) {
 				System.out.println("Usuário não encontrado, digite um id válido (opcional, digite -1 se não tiver)");
 			}
@@ -107,6 +108,7 @@ public class MenuNC {
 					cadastrar();
 					break;
 				case 12:
+					Audicao();
 					break;
 				case 13:
 					deletar();
