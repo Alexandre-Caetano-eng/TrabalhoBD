@@ -1,11 +1,21 @@
 package gerenciar;
 
+import java.util.InputMismatchException;
+
 public class NC {
 	public static BancoDeDadosNC bdNC = new BancoDeDadosNC();
 	public static BancoDeDadosUsuario bdU = new BancoDeDadosUsuario();
 	public static BancoDeDadosEquipe bdE = new BancoDeDadosEquipe();
-	public void cadastrarResolucao() {
-		
+	public void adicionarResolucao(int id) {
+		String resolucao="", verifica;
+		System.out.println("Digite uma resolução ou não digite nada para sair.");
+		resolucao = MenuInicial.in.next() + MenuInicial.in.nextLine();
+		verifica=resolucao.trim();
+		if(verifica!="") {
+			bdNC.adicionarResolucaoNC(id, resolucao);
+		}else {
+			System.out.println("Saindo da resolução.");
+		}
 	}
 	
 	public void inserirUsuarioResp(int id) {
@@ -30,13 +40,15 @@ public class NC {
 		int ide;
 		if(bdNC.verificaNCEResp(id)!=false) {
 			do {
-				System.out.println("Digite uma id de válida Usuário ou -1 para sair");
+				System.out.println("Digite uma id de equipe válida ou -1 para sair");
 				ide = MenuInicial.in.nextInt();
-				if(bdE.verificaEquipeExiste(ide)==true) {
-					bdNC.alterarEquipeRespNC(id, ide);
-					ide=-1;
-				}else {
-					System.out.println("Id de usuário inválida.");
+				if(ide!=-1) {
+					if(bdE.verificaEquipeExiste(ide)==true) {
+						bdNC.alterarEquipeRespNC(id, ide);
+						ide=-1;
+					}else {
+						System.out.println("Id de usuário inválida.");
+					}
 				}
 			}while(ide!=-1);
 		}else {
@@ -62,18 +74,26 @@ public class NC {
 	
 	public void visualizar(int id) {
 		int escolha=0;
+		String esc;
 		do {
-			System.out.println("Escolha a opção: 1-Alterar prioridade NC\n2-Adicionar Resolução\n3-Inserir Usuário Responsável NC\n4-Inserir Equipe responsavel NC\n0-Sair");
 			System.out.println("--------------------------------------------------------------------------------");
 			bdNC.selecionarNCespecifica(id);
 			System.out.println("--------------------------------------------------------------------------------");
+			System.out.println("Escolha a opção: \n1-Alterar prioridade NC\n2-Adicionar Resolução\n3-Inserir Usuário Responsável NC\n4-Inserir Equipe responsavel NC\n0-Sair");
 			System.out.println("Digite sua escolha: ");
-			escolha = MenuInicial.in.nextInt();
+			try {
+				escolha = MenuInicial.in.nextInt();
+			}catch(InputMismatchException e) {
+				esc = MenuInicial.in.next();
+				System.out.println(esc);
+				escolha=-1;
+			}
 			switch(escolha) {
 			case 1:
 				alterarPrioridade(id);
 				break;
 			case 2:
+				adicionarResolucao(id);
 				break;
 			case 3:
 				inserirUsuarioResp(id);
