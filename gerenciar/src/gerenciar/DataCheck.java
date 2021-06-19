@@ -49,8 +49,8 @@ public class DataCheck {
 		String concatena=array[posA]+array[posB]+array[posC]+array[posD];
 		int ano = Integer.parseInt(concatena);
 		try {
-			if(ano<2000) {
-				System.out.println("Ano ínválido para cadastrar");
+			if(ano<1900) {
+				System.out.println("Ano ínválido para cadastrar.");
 				return false;
 			}
 		}catch(Exception e) {
