@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: 11-Jun-2021 às 22:22
+-- Generation Time: 19-Jun-2021 às 03:31
 -- Versão do servidor: 5.7.25
 -- versão do PHP: 7.1.26
 
@@ -19,7 +19,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `banco_atualizado`
+-- Database: `gerenciamento_nc`
 --
 
 -- --------------------------------------------------------
@@ -37,8 +37,6 @@ CREATE TABLE `cargo` (
 
 --
 -- RELATIONSHIPS FOR TABLE `cargo`:
---   `idCargo`
---       `usuario` -> `idCargo`
 --
 
 --
@@ -70,7 +68,9 @@ CREATE TABLE `equipe` (
 
 INSERT INTO `equipe` (`idE`, `nome`) VALUES
 (1, 'Auditores'),
-(2, 'Solucionadores');
+(2, 'Solucionadores'),
+(3, 'Administradores'),
+(6, 'Programadores');
 
 -- --------------------------------------------------------
 
@@ -106,10 +106,11 @@ CREATE TABLE `nc` (
 
 INSERT INTO `nc` (`idNC`, `nome`, `descricao`, `dataCriacao`, `dataTermino`, `pdf`, `fotos`, `resolucao`, `prioridades`, `idU`, `idE`) VALUES
 (1, 'Problemas nas escadas', 'Muitos acidentes ocorrendo nas escadas', '2021-05-25', '2021-05-26', NULL, NULL, 'Colocar Borrachas nos pisos .\n Colocar corrimão.\n Colocar avisos.', 5, 2, 2),
-(2, 'Problema nas pias', 'Pias entupidas de cabelos e papel', '2021-05-31', NULL, NULL, NULL, NULL, 4, NULL, 2),
+(2, 'Problema nas pias', 'Pias entupidas de cabelos e papel', '2021-05-31', NULL, NULL, NULL, 'Adicionarlimpara Disponibilizar desentupidores de  pia. Instalar novos canos.', 4, NULL, 2),
 (3, 'Problemas nos vasos sanitários', 'Os vasos estão entupindo constantemente com cocô e papel.', '2021-05-31', NULL, NULL, NULL, NULL, 5, 1, 2),
 (4, 'Fogos de artificio lançado dentro da instalações', 'Pessoal não autorizado, que não  faz parte da empresa, soltando fogos de artificio dentro do prédio.', '2021-05-31', NULL, NULL, NULL, NULL, 5, NULL, NULL),
-(6, 'Problemas de iluminação', 'Corredores e escritórios mau iluminados estão causando acidentes.', '2021-06-09', NULL, NULL, NULL, NULL, 5, NULL, NULL);
+(6, 'Problemas de iluminação', 'Corredores e escritórios mau iluminados estão causando acidentes.', '2021-06-09', NULL, NULL, NULL, NULL, 5, NULL, NULL),
+(7, 'Barulho alto na cozinha', 'Pessoal da cozinha fazendo festa durante expediente.', '2021-05-15', NULL, NULL, NULL, NULL, 5, 2, 1);
 
 -- --------------------------------------------------------
 
@@ -133,6 +134,8 @@ CREATE TABLE `usuario` (
 -- RELATIONSHIPS FOR TABLE `usuario`:
 --   `idE`
 --       `equipe` -> `idE`
+--   `idCargo`
+--       `cargo` -> `idCargo`
 --
 
 --
@@ -141,7 +144,9 @@ CREATE TABLE `usuario` (
 
 INSERT INTO `usuario` (`idU`, `nome`, `email`, `dataNascimento`, `CPF`, `PIS`, `senha`, `idCargo`, `idE`) VALUES
 (1, 'João Pedroso', 'joao@email.com.br', '1985-01-08', 1, 1, '321', 1, 1),
-(2, 'Rodrigo da Silva', 'rodrigo@email.com.br', '1989-12-25', 2, 2, '123', 2, 2);
+(2, 'Rodrigo da Silva', 'rodrigo@email.com.br', '1989-12-25', 2, 2, '123', 2, 2),
+(3, 'Maria Bertina', 'mariabertina@email.com', '1989-01-15', 3, 3, '312', 1, 3),
+(5, 'Paulo Mineiro', 'paulo@email.com.br', '1987-12-05', 4, 4, '132', 2, 6);
 
 --
 -- Indexes for dumped tables
@@ -172,8 +177,8 @@ ALTER TABLE `nc`
 --
 ALTER TABLE `usuario`
   ADD PRIMARY KEY (`idU`),
-  ADD KEY `Cargo` (`idCargo`),
-  ADD KEY `Equipe` (`idE`);
+  ADD KEY `Equipe` (`idE`),
+  ADD KEY `fk_Cargo` (`idCargo`);
 
 --
 -- AUTO_INCREMENT for dumped tables
@@ -189,29 +194,23 @@ ALTER TABLE `cargo`
 -- AUTO_INCREMENT for table `equipe`
 --
 ALTER TABLE `equipe`
-  MODIFY `idE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idE` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `nc`
 --
 ALTER TABLE `nc`
-  MODIFY `idNC` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `idNC` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `usuario`
 --
 ALTER TABLE `usuario`
-  MODIFY `idU` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `idU` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Limitadores para a tabela `cargo`
---
-ALTER TABLE `cargo`
-  ADD CONSTRAINT `cargo_ibfk_1` FOREIGN KEY (`idCargo`) REFERENCES `usuario` (`idCargo`);
 
 --
 -- Limitadores para a tabela `nc`
@@ -224,7 +223,8 @@ ALTER TABLE `nc`
 -- Limitadores para a tabela `usuario`
 --
 ALTER TABLE `usuario`
-  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idE`) REFERENCES `equipe` (`idE`);
+  ADD CONSTRAINT `usuario_ibfk_1` FOREIGN KEY (`idE`) REFERENCES `equipe` (`idE`),
+  ADD CONSTRAINT `usuario_ibfk_2` FOREIGN KEY (`idCargo`) REFERENCES `cargo` (`idCargo`);
 
 
 --
@@ -249,16 +249,35 @@ USE `phpmyadmin`;
 --
 
 INSERT INTO `pma__column_info` (`db_name`, `table_name`, `column_name`, `comment`, `mimetype`, `transformation`, `transformation_options`, `input_transformation`, `input_transformation_options`) VALUES
-('banco_atualizado', 'nc', 'fotos', '', '', 'output/image_jpeg_link.php', '', '', ''),
-('banco_atualizado', 'nc', 'pdf', '', '', 'output/application_octetstream_download.php', '', '', '');
+('gerenciamento_nc', 'nc', 'fotos', '', '', 'output/image_jpeg_link.php', '', 'Input/Image_JPEG_Upload.php', ''),
+('gerenciamento_nc', 'nc', 'pdf', '', '', 'output/application_octetstream_download.php', '', 'Input/Text_Plain_JsonEditor.php', '');
 
 --
 -- Metadata for table usuario
 --
 
 --
--- Metadata for database banco_atualizado
+-- Metadata for database gerenciamento_nc
 --
+
+--
+-- Extraindo dados da tabela `pma__pdf_pages`
+--
+
+INSERT INTO `pma__pdf_pages` (`db_name`, `page_descr`) VALUES
+('gerenciamento_nc', 'GerenciamentoNC');
+
+SET @LAST_PAGE = LAST_INSERT_ID();
+
+--
+-- Extraindo dados da tabela `pma__table_coords`
+--
+
+INSERT INTO `pma__table_coords` (`db_name`, `table_name`, `pdf_page_number`, `x`, `y`) VALUES
+('gerenciamento_nc', 'cargo', @LAST_PAGE, 119, 128),
+('gerenciamento_nc', 'equipe', @LAST_PAGE, 137, 536),
+('gerenciamento_nc', 'nc', @LAST_PAGE, 359, 262),
+('gerenciamento_nc', 'usuario', @LAST_PAGE, 129, 286);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
