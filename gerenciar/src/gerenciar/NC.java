@@ -86,7 +86,12 @@ public class NC {
 			}catch(InputMismatchException e) {
 				esc = MenuInicial.in.next();
 				System.out.println(esc);
-				escolha=-1;
+				try {
+					escolha=Integer.parseInt(esc);
+				}catch(Exception er) {
+					System.out.println(er+" = Não deu para converter.");
+					escolha=-1;
+				}
 			}
 			switch(escolha) {
 			case 1:
